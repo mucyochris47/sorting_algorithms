@@ -1,54 +1,83 @@
 #include "sort.h"
 
 /**
- * swap - swaps 2 nodes in a doubly-linked list
- * @a: address of first node
- * @b: address of second node
+ * _swap - Swaps two nodes of doubly linked list
  *
- * Return: void
+ * @node: node base to change
+ * @list: double link list head
+ *
+ * Return: No Return
  */
-void swap(listint_t *a, listint_t *b)
+void _swap(listint_t **node, listint_t **list)
 {
-	if (a->prev)
-		a->prev->next = b;
-	if (b->next)
-		b->next->prev = a;
-	a->next = b->next;
-	b->prev = a->prev;
-	a->prev = b;
-	b->next = a;
+	listint_t *tmp = *node, *tmp2, *tmp3;
+
+	if (!(*node)->prev)
+		*list = (*node)->next;
+
+	tmp = tmp3 = *node;
+	tmp2 = tmp->next;
+
+	tmp->next = tmp2->next;
+	tmp3 = tmp->prev;
+	tmp->prev = tmp2;
+	tmp2->next = tmp;
+	tmp2->prev = tmp3;
+
+	if (tmp2->prev)
+		tmp2->prev->next = tmp2;
+
+
+	if (tmp->next)
+		tmp->next->prev = tmp;
+
+	*node = tmp2;
 
 }
-
 /**
- * insertion_sort_list - insertion sorts a doubly-linked list
- * @list: address of pointer to head node
+ * insertion_sort_list - sorts a doubly linked list of integers
+ * in ascending order using the Insertion sort algorithm
  *
- * Return: void
+ * @list: doubly linked list
+ *
+ * Return: No Return
  */
 void insertion_sort_list(listint_t **list)
 {
-	listint_t *i, *j;
+	listint_t  *head, *tback, *aux;
 
-	if (!list || !*list || !(*list)->next)
+	if (!list || !(*list) || (!((*list)->prev) && !((*list)->next)))
 		return;
-	i = (*list)->next;
-	while (i)
-	{
-		j = i;
-		i = i->next;
-		while (j && j->prev)
-		{
-			if (j->prev->n > j->n)
-			{
-				swap(j->prev, j);
-				if (!j->prev)
-					*list = j;
-				print_list((const listint_t *)*list);
-			}
-			else
-				j = j->prev;
-		}
 
+	head = *list;
+	while (head && head->next)
+	{
+		if (head->n > head->next->n)
+		{
+			aux = head;
+
+			_swap(&aux, list);
+			print_list(*list);
+			head = aux;
+			tback = aux;
+
+			while (tback && tback->prev)
+			{
+
+				if (tback->n < tback->prev->n)
+				{
+					aux = tback->prev;
+
+					_swap(&(aux), list);
+
+					print_list(*list);
+					tback = aux->next;
+				}
+
+				tback = tback->prev;
+			}
+
+		}
+		head = head->next;
 	}
 }
