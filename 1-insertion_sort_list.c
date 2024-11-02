@@ -1,83 +1,37 @@
 #include "sort.h"
 
 /**
- * _swap - Swaps two nodes of doubly linked list
- *
- * @node: node base to change
- * @list: double link list head
- *
- * Return: No Return
- */
-void _swap(listint_t **node, listint_t **list)
-{
-	listint_t *tmp = *node, *tmp2, *tmp3;
-
-	if (!(*node)->prev)
-		*list = (*node)->next;
-
-	tmp = tmp3 = *node;
-	tmp2 = tmp->next;
-
-	tmp->next = tmp2->next;
-	tmp3 = tmp->prev;
-	tmp->prev = tmp2;
-	tmp2->next = tmp;
-	tmp2->prev = tmp3;
-
-	if (tmp2->prev)
-		tmp2->prev->next = tmp2;
-
-
-	if (tmp->next)
-		tmp->next->prev = tmp;
-
-	*node = tmp2;
-
-}
-/**
  * insertion_sort_list - sorts a doubly linked list of integers
  * in ascending order using the Insertion sort algorithm
- *
- * @list: doubly linked list
- *
- * Return: No Return
+ * @list: pointer to the head of the doubly linked list
  */
 void insertion_sort_list(listint_t **list)
 {
-	listint_t  *head, *tback, *aux;
+    listint_t *current, *tmp;
 
-	if (!list || !(*list) || (!((*list)->prev) && !((*list)->next)))
-		return;
+    if (!list || !*list || !(*list)->next)
+        return;
 
-	head = *list;
-	while (head && head->next)
-	{
-		if (head->n > head->next->n)
-		{
-			aux = head;
-
-			_swap(&aux, list);
-			print_list(*list);
-			head = aux;
-			tback = aux;
-
-			while (tback && tback->prev)
-			{
-
-				if (tback->n < tback->prev->n)
-				{
-					aux = tback->prev;
-
-					_swap(&(aux), list);
-
-					print_list(*list);
-					tback = aux->next;
-				}
-
-				tback = tback->prev;
-			}
-
-		}
-		head = head->next;
-	}
+    current = (*list)->next;
+    while (current)
+    {
+        tmp = current;
+        while (tmp->prev && tmp->n < tmp->prev->n)
+        {
+            /* Swap nodes */
+            tmp->prev->next = tmp->next;
+            if (tmp->next)
+                tmp->next->prev = tmp->prev;
+            tmp->next = tmp->prev;
+            tmp->prev = tmp->prev->prev;
+            tmp->next->prev = tmp;
+            if (tmp->prev)
+                tmp->prev->next = tmp;
+            else
+                *list = tmp;
+            print_list(*list);
+        }
+        current = current->next;
+    }
 }
+
